@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+DEFAULT_PROFILE_PIC = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png"
+
 
 def connect_db(app):
     """Connect to database."""
@@ -26,5 +28,4 @@ class User(db.Model):
                            nullable = False)
     image_url = db.Column(db.Text,
                           nullable = False,
-                          default = """https://www.kindpng.com/picc/m/24-248253
-                          _user-profile-default-image-png-clipart-png-download.png""")
+                          default = DEFAULT_PROFILE_PIC)
