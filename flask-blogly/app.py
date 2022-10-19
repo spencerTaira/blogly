@@ -2,13 +2,14 @@
 
 from nturl2path import url2pathname
 from unicodedata import name
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, flash
 from models import db, connect_db, User
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
+app.config['SECRET_KEY'] = "password"
 
 connect_db(app)
 db.create_all()
@@ -38,6 +39,7 @@ def add_new_user():
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     image_url = request.form['image_url']
+    image_url = image_url if image_url != "" else None
 
     user = User(first_name = first_name, last_name = last_name, image_url=image_url)
     db.session.add(user)
@@ -74,4 +76,12 @@ def update_user_profile(user_id):
 
     db.session.commit()
 
+    return redirect('/users')
+
+@app.post('/users/<user_id>/delete')
+def delete_user(user_id):
+    User.query.filter(User.id == user_id).delete()
+    db.session.commit()
+
+    flash("User has been deleted!")
     return redirect('/users')

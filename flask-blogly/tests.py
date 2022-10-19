@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app, db
-from models import DEFAULT_IMAGE_URL, User
+from models import User
 
 # Let's configure our app to use a different database for tests
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///blogly_test"
@@ -64,3 +64,16 @@ class UserViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertIn("test_first", html)
             self.assertIn("test_last", html)
+
+    def test_add_new_user(self):
+        with self.client as c:
+            data = {
+                'first_name': 'First',
+                'last_name': 'Last',
+                'image_url': "",
+                }
+            resp = c.post('/users/new', data = data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("First", html)
+
