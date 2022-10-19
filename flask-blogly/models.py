@@ -24,6 +24,7 @@ class User(db.Model):
                            nullable = False)
     last_name = db.Column(db.String(50),
                            nullable = False)
-    image_url = db.Column(db.String(100),
+    image_url = db.Column(db.Text,
                           nullable = False,
-                          default = '') #default image url
+                          default = """https://www.kindpng.com/picc/m/24-248253
+                          _user-profile-default-image-png-clipart-png-download.png""")
