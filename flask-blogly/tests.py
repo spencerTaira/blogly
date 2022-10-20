@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from app import app, db
-from models import User
+from models import User, connect_db
 
 # Let's configure our app to use a different database for tests
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///blogly_test"
@@ -16,6 +16,7 @@ app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
 
+connect_db(app)
 db.create_all()
 
 
@@ -89,7 +90,7 @@ class UserViewTestCase(TestCase):
             self.assertIn("test_first", html)
             self.assertIn('Delete', html)
 
-            resp = c.get(f'/users/1000') #good/bad tests
+            resp = c.get(f'/users/1000')  # good/bad tests
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 404)
 

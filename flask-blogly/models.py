@@ -39,6 +39,8 @@ class User(db.Model):
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
 
+    # .posts to navigate to posts because of backref
+
 
 class Post(db.Model):
     """Post Class"""
@@ -58,3 +60,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.id'),
                         nullable=False)
+    user = db.relationship('User', backref='posts')

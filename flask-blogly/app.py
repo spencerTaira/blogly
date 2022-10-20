@@ -56,8 +56,9 @@ def show_user_profile(user_id):
     """Shows the users profile, options to edit info and delete profile"""
 
     user = User.query.get_or_404(user_id)
+    posts = Post.query.filter(Post.user_id == user_id)
 
-    return render_template('user_profile.html', user=user)
+    return render_template('user_profile.html', user=user, posts=posts)
 
 
 @app.get('/users/<int:user_id>/edit')
@@ -95,12 +96,14 @@ def delete_user(user_id):
     flash("User has been deleted!")
     return redirect('/users')
 
+
 @app.get('/users/<int:user_id>/posts/new')
 def show_post_form(user_id):
     """ Render post form html """
 
     user = User.query.get(user_id)
     return render_template('new_post_form.html', user=user)
+
 
 @app.post('/users/<int:user_id>/posts/new')
 def add_new_post(user_id):
@@ -129,3 +132,17 @@ def add_new_post(user_id):
     db.session.commit()
 
     return redirect(f'/users/{user_id}')
+
+
+@app.get('/posts/<int:post_id>')
+def view_post(post_id):
+    post = Post.query.get(post_id)
+
+    return render_template('post_detail.html', post=post)
+
+
+@app.get('/posts/<int:post_id>/edit')
+def show_edit_post_form(post_id):
+    post = Post.query.get(post_id)
+
+    return render_template('edit_post.html', post=post)

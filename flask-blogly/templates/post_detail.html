@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+User Post
+{% endblock %}
+
+{% block content %}
+
+<h1>{{post.title}}</h1>
+<p>{{post.content}}</p>
+<i>By: {{post.user.get_full_name}}</i>
+
+<div>
+  <form action="">
+    <input type="submit" name="cancel" class="btn btn-outline-primary" value="Cancel"
+      formaction="/users/{{post.user_id}}">
+    <input type="submit" name="edit" class="btn btn-primary" value="Edit" formaction="/posts/{{post.id}}/edit">
+    <input formmethod="post" type="submit" name="delete" class="btn btn-danger" value="Delete"
+      formaction="/posts/{{post.id}}/delete">
+  </form>
+</div>
+
+{% endblock %}
