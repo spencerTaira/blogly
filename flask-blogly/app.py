@@ -94,3 +94,38 @@ def delete_user(user_id):
 
     flash("User has been deleted!")
     return redirect('/users')
+
+@app.get('/users/<int:user_id>/posts/new')
+def show_post_form(user_id):
+    """ Render post form html """
+
+    user = User.query.get(user_id)
+    return render_template('new_post_form.html', user=user)
+
+@app.post('/users/<int:user_id>/posts/new')
+def add_new_post(user_id):
+    """ Adds new record to posts table"""
+
+    title = request.form['title']
+    content = request.form['content']
+    user = User.query.get(user_id)
+
+    if content == '' or title == '':
+        flash("ERROR: Please enter text in all fields")
+        return render_template(
+            'new_post_form.html',
+            user=user,
+            title=title,
+            content=content
+        )
+
+    post = Post(
+        title=title,
+        content=content,
+        user_id=user_id
+    )
+
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}')

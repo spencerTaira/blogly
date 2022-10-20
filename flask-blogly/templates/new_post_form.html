@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+New Post Form
+{% endblock %}
+
+{% block content %}
+
+<h1>Add Post for {{user.get_full_name}}</h1>
+
+{% for msg in get_flashed_messages() %}
+<div class="alert alert-danger">{{msg}}</div>
+{% endfor %}
+
+<div>
+  <form>
+
+    <label for="title" class="form-label">Title:</label>
+    <input type="text" id="title" name="title" value="{{title}}" class="form-control">
+
+    <label for="content" class="form-label">Content:</label>
+    <!-- <input type="text" id="content" name="content" class="form-control"> -->
+    <textarea class="form-control" id="content" name="content" rows="3">{{content}}</textarea>
+
+
+
+    <input type="submit" name="cancel" class="btn btn-outline-primary" value="Cancel" formaction="/users/{{user.id}}">
+    <input type="submit" name="add" class="btn btn-success" value="Add" formaction="/users/{{user.id}}/posts/new" formmethod="POST">
+  </form>
+</div>
+
+{% endblock %}
