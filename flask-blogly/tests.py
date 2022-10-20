@@ -71,9 +71,49 @@ class UserViewTestCase(TestCase):
                 'first_name': 'First',
                 'last_name': 'Last',
                 'image_url': "",
-                }
-            resp = c.post('/users/new', data = data, follow_redirects=True)
+            }
+            resp = c.post('/users/new', data=data, follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
             self.assertIn("First", html)
 
+    def test_show_user_profile(self):
+        with self.client as c:
+
+            resp = c.get(f'/users/{self.user_id}')
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("test_first", html)
+            self.assertIn('Delete', html)
+
+            resp = c.get(f'/users/1000')
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 404)
+
+    def test_update_user_profile(self):
+        with self.client as c:
+            resp = c.post(
+                f'/users/{self.user_id}/edit',
+                data={
+                    "first_name": "update_first",
+                    "last_name": "update_last",
+                    "image_url": ""
+                },
+                follow_redirects=True
+            )
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("update_first", html)
+
+    def test_delete_user_profile(self):
+        with self.client as c:
+            resp = c.post(
+                f'/users/{self.user_id}/delete',
+                follow_redirects=True
+            )
+
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("User has been deleted!", html)
+            self.assertNotIn('test_first ', html)
+            self.assertIn('test_last_two', html)
