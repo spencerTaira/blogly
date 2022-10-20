@@ -16,17 +16,32 @@ Edit Post
   <form>
 
     <label for="title" class="form-label">Title:</label>
-    <input type="text" id="title" name="title" value="{{post.title}}" class="form-control">
+    <input
+      type="text"
+      id="title"
+      name="title"
+      value="{{title}}"
+      class="form-control">
 
     <label for="content" class="form-label">Content:</label>
-    <!-- <input type="text" id="content" name="content" class="form-control"> -->
-    <textarea class="form-control" id="content" name="content" rows="3">{{post.content}}</textarea>
+    <textarea
+      class="form-control"
+      id="content"
+      name="content"
+      rows="3">{{content}}</textarea>
 
-
-
-    <input type="submit" name="cancel" class="btn btn-outline-primary" value="Cancel"
-      formaction="/users/{{post.user_id}}">
-    <input type="submit" name="edit" class="btn btn-success" value="Edit" formaction="/posts/{{post.id}}/edit"
+    <input
+      type="submit"
+      name="cancel"
+      class="btn btn-outline-primary"
+      value="Cancel"
+      formaction="/posts/{{post_id}}">
+    <input
+      type="submit"
+      name="edit"
+      class="btn btn-success"
+      value="Edit"
+      formaction="/posts/{{post_id}}/edit"
       formmethod="POST">
   </form>
 </div>

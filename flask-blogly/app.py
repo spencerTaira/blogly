@@ -77,7 +77,7 @@ def update_user_profile(user_id):
     last_name = request.form['last_name']
     image_url = request.form['image_url']
 
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     user.first_name = first_name
     user.last_name = last_name
     user.image_url = image_url
@@ -101,7 +101,7 @@ def delete_user(user_id):
 def show_post_form(user_id):
     """ Render post form html """
 
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template('new_post_form.html', user=user)
 
 
@@ -111,7 +111,7 @@ def add_new_post(user_id):
 
     title = request.form['title']
     content = request.form['content']
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
 
     if content == '' or title == '':
         flash("ERROR: Please enter text in all fields")
@@ -136,13 +136,49 @@ def add_new_post(user_id):
 
 @app.get('/posts/<int:post_id>')
 def view_post(post_id):
-    post = Post.query.get(post_id)
+    post = Post.query.get_or_404(post_id)
 
     return render_template('post_detail.html', post=post)
 
 
 @app.get('/posts/<int:post_id>/edit')
 def show_edit_post_form(post_id):
-    post = Post.query.get(post_id)
+    post = Post.query.get_or_404(post_id)
 
-    return render_template('edit_post.html', post=post)
+    return render_template(
+        'edit_post.html',
+        title=post.title,
+        content=post.content,
+        post_id=post.id
+    )
+
+@app.post('/posts/<int:post_id>/edit')
+def edit_post(post_id):
+    title = request.form['title']
+    content = request.form['content']
+    post = Post.query.get_or_404(post_id)
+
+    if content == '' or title == '':
+        flash("ERROR: Please enter text in all fields")
+        return render_template(
+            'edit_post.html',
+            title=title,
+            content=content,
+            post_id=post_id
+        )
+
+    post.title = title
+    post.content = content
+    db.session.commit()
+
+    return redirect(f'/posts/{post_id}')
+
+@app.post('/posts/<int:post_id>/delete')
+def delete_post(post_id):
+    post = Post.query.get(post_id)
+    user_id = post.user_id
+    Post.query.filter(Post.id == post_id).delete()
+    db.session.commit()
+
+    flash("Post has been deleted!")
+    return redirect(f'/users/{user_id}')
