@@ -24,7 +24,7 @@ def home_page():
 def list_users():
     """ Lists all users """
 
-    users = User.query.all()
+    users = User.query.order_by(User.last_name, User.first_name).all()
     return render_template('user_list.html', users=users)
 
 @app.get('/users/new')
@@ -47,7 +47,7 @@ def add_new_user():
 
     return redirect ('/users')
 
-@app.get('/users/<user_id>')
+@app.get('/users/<int:user_id>')
 def show_user_profile(user_id):
     """Shows the users profile, options to edit info and delete profile"""
 
@@ -55,7 +55,7 @@ def show_user_profile(user_id):
 
     return render_template('user_profile.html', user=user)
 
-@app.get('/users/<user_id>/edit')
+@app.get('/users/<int:user_id>/edit')
 def edit_user_profile(user_id):
     """ Shows edit profile page and allows users to edit info"""
 
@@ -63,8 +63,9 @@ def edit_user_profile(user_id):
 
     return render_template('edit_profile.html', user=user)
 
-@app.post('/users/<user_id>/edit')
+@app.post('/users/<int:user_id>/edit')
 def update_user_profile(user_id):
+    """ Updates sql table with edits """
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     image_url = request.form['image_url']
@@ -78,8 +79,9 @@ def update_user_profile(user_id):
 
     return redirect('/users')
 
-@app.post('/users/<user_id>/delete')
+@app.post('/users/<int:user_id>/delete')
 def delete_user(user_id):
+    """ deletes record referencing primary key (id) """
     User.query.filter(User.id == user_id).delete()
     db.session.commit()
 

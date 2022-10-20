@@ -20,7 +20,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer,
-                   primary_key = True,
+                   primary_key=True, #remove spaces when passing a value through
                    autoincrement = True)
     first_name = db.Column(db.String(50),
                            nullable = False)
@@ -29,3 +29,9 @@ class User(db.Model):
     image_url = db.Column(db.Text,
                           nullable = False,
                           default = DEFAULT_PROFILE_PIC)
+
+    # def __init__(self):
+    #     self.full_name = self.get_full_name()
+
+    def get_full_name(self):
+        return f'{self.first_name} {self.last_name}'

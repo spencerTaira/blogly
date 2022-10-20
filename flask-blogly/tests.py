@@ -58,6 +58,7 @@ class UserViewTestCase(TestCase):
         db.session.rollback()
 
     def test_list_users(self):
+        """ Tests that user list renders """
         with self.client as c:
             resp = c.get("/users")
             self.assertEqual(resp.status_code, 200)
@@ -66,6 +67,7 @@ class UserViewTestCase(TestCase):
             self.assertIn("test_last", html)
 
     def test_add_new_user(self):
+        """ Test that a new user gets added to users list"""
         with self.client as c:
             data = {
                 'first_name': 'First',
@@ -78,6 +80,7 @@ class UserViewTestCase(TestCase):
             self.assertIn("First", html)
 
     def test_show_user_profile(self):
+        """ Test that user_profile renders """
         with self.client as c:
 
             resp = c.get(f'/users/{self.user_id}')
@@ -86,11 +89,12 @@ class UserViewTestCase(TestCase):
             self.assertIn("test_first", html)
             self.assertIn('Delete', html)
 
-            resp = c.get(f'/users/1000')
+            resp = c.get(f'/users/1000') #good/bad tests
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 404)
 
     def test_update_user_profile(self):
+        """ Testing that edits to user profile processes correctly"""
         with self.client as c:
             resp = c.post(
                 f'/users/{self.user_id}/edit',
@@ -106,6 +110,7 @@ class UserViewTestCase(TestCase):
             self.assertIn("update_first", html)
 
     def test_delete_user_profile(self):
+        """ Test that user gets deleted from user list / table """
         with self.client as c:
             resp = c.post(
                 f'/users/{self.user_id}/delete',
