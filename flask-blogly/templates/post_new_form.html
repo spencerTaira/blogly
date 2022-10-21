@@ -8,10 +8,6 @@ New Post Form
 
 <h1>Add Post for {{user.get_full_name}}</h1>
 
-{% for msg in get_flashed_messages() %}
-<div class="alert alert-danger">{{msg}}</div>
-{% endfor %}
-
 <div>
   <form>
 
@@ -25,7 +21,8 @@ New Post Form
 
 
     <input type="submit" name="cancel" class="btn btn-outline-primary" value="Cancel" formaction="/users/{{user.id}}">
-    <input type="submit" name="add" class="btn btn-success" value="Add" formaction="/users/{{user.id}}/posts/new" formmethod="POST">
+    <input type="submit" name="add" class="btn btn-success" value="Add" formaction="/users/{{user.id}}/posts/new"
+      formmethod="POST">
   </form>
 </div>
 

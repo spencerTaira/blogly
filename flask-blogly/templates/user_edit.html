@@ -6,7 +6,7 @@ Edit A User Form
 
 {% block content %}
 <h1>Edit a user</h1>
-
+<!-- edit name to user_edit -->
 <div>
   <form>
 
@@ -20,7 +20,8 @@ Edit A User Form
     <input type="text" id="image_url" name="image_url" value="{{user.image_url}}" class="form-control">
 
     <input type="submit" name="cancel" class="btn btn-outline-primary" value="Cancel" formaction="/users/{{user.id}}">
-    <input type="submit" name="submit" class="btn btn-success" value="Save" formaction="/users/{{user.id}}/edit" formmethod="POST">
+    <input type="submit" name="submit" class="btn btn-success" value="Save" formaction="/users/{{user.id}}/edit"
+      formmethod="POST">
   </form>
 </div>
 {% endblock %}

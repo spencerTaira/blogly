@@ -29,10 +29,10 @@ def list_users():
 
 
 @app.get('/users/new')
-def show_new_user_form():
+def show_user_new_form():
     """ Shows input form for new user"""
 
-    return render_template('new_user_form.html')
+    return render_template('user_new_form.html')
 
 
 @app.post('/users/new')
@@ -43,8 +43,12 @@ def add_new_user():
     image_url = request.form['image_url']
     image_url = image_url if image_url != "" else None
 
-    user = User(first_name=first_name,
-                last_name=last_name, image_url=image_url)
+    user = User(
+        first_name=first_name,
+        last_name=last_name,
+        image_url=image_url
+    )
+
     db.session.add(user)
     db.session.commit()
 
@@ -67,7 +71,7 @@ def edit_user_profile(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template('edit_profile.html', user=user)
+    return render_template('user_edit.html', user=user)
 
 
 @app.post('/users/<int:user_id>/edit')
@@ -90,6 +94,7 @@ def update_user_profile(user_id):
 @app.post('/users/<int:user_id>/delete')
 def delete_user(user_id):
     """ deletes record referencing primary key (id) """
+    Post.query.filter(Post.user_id == user_id).delete()
     User.query.filter(User.id == user_id).delete()
     db.session.commit()
 
@@ -102,12 +107,12 @@ def show_post_form(user_id):
     """ Render post form html """
 
     user = User.query.get_or_404(user_id)
-    return render_template('new_post_form.html', user=user)
+    return render_template('post_new_form.html', user=user)
 
 
 @app.post('/users/<int:user_id>/posts/new')
 def add_new_post(user_id):
-    """ Adds new record to posts table"""
+    """ Adds new record to posts table and redirects user to user profile"""
 
     title = request.form['title']
     content = request.form['content']
@@ -116,7 +121,7 @@ def add_new_post(user_id):
     if content == '' or title == '':
         flash("ERROR: Please enter text in all fields")
         return render_template(
-            'new_post_form.html',
+            'post_new_form.html',
             user=user,
             title=title,
             content=content
@@ -127,6 +132,7 @@ def add_new_post(user_id):
         content=content,
         user_id=user_id
     )
+    # user.posts.add
 
     db.session.add(post)
     db.session.commit()
@@ -136,24 +142,28 @@ def add_new_post(user_id):
 
 @app.get('/posts/<int:post_id>')
 def view_post(post_id):
+    """Allows user to view the post details, renders html"""
     post = Post.query.get_or_404(post_id)
 
     return render_template('post_detail.html', post=post)
 
 
 @app.get('/posts/<int:post_id>/edit')
-def show_edit_post_form(post_id):
+def show_post_edit_form(post_id):
+    """ Allows user to edit post"""
     post = Post.query.get_or_404(post_id)
 
     return render_template(
-        'edit_post.html',
+        'post_edit.html',
         title=post.title,
         content=post.content,
         post_id=post.id
     )
 
+
 @app.post('/posts/<int:post_id>/edit')
-def edit_post(post_id):
+def post_edit(post_id):
+    """ Saves post edits and re-directs to view edited post"""
     title = request.form['title']
     content = request.form['content']
     post = Post.query.get_or_404(post_id)
@@ -161,7 +171,7 @@ def edit_post(post_id):
     if content == '' or title == '':
         flash("ERROR: Please enter text in all fields")
         return render_template(
-            'edit_post.html',
+            'post_edit.html',
             title=title,
             content=content,
             post_id=post_id
@@ -173,8 +183,10 @@ def edit_post(post_id):
 
     return redirect(f'/posts/{post_id}')
 
+
 @app.post('/posts/<int:post_id>/delete')
 def delete_post(post_id):
+    """Deletes post and updates post list. Re-directs user to user profile"""
     post = Post.query.get(post_id)
     user_id = post.user_id
     Post.query.filter(Post.id == post_id).delete()
